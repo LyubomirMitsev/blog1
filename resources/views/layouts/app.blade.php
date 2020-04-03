@@ -18,6 +18,28 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <style>
+        #profile_image{
+            height: 150px;
+            width: 150px;
+            float: left;
+            border-radius: 50%;
+            margin-right: 25px;
+        }
+
+        #nav_image{
+            height: 32px;
+            width: 32px;
+            top: 10px;
+            border-radius: 50%;
+        }
+
+        .navbar-toggler{
+            position: relative;
+            padding-left: 50px;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -49,12 +71,36 @@
                                 </li>
                             @endif
                         @else
+                            
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <img src="/uploads/avatars/{{ Auth::user()->avatar }}" id="nav_image">
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('profile.index') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('profile-form').submit();">
+                                        {{ __('Profile') }}
+                                    </a>
+
+                                    <form id="profile-form" action="{{ route('profile.index') }}" method="GET" style="display: none;">
+                                    </form>
+
+                                    <a class="dropdown-item" href="/profile/{{ Auth::user()->id }}/edit"
+                                        onclick="event.preventDefault();
+                                                     document.getElementById('edit-profile-form').submit();">
+                                        {{ __('Edit Profile info') }}
+                                    </a>
+
+                                    <form id="edit-profile-form" action="/profile/{{ Auth::user()->id }}/edit" method="GET">
+                                    </form>
+
+                                    <button class="dropdown-item" class="btn btn-danger" role="button" data-toggle="modal" data-target="#delete-profile-{{ Auth::user()->id }}">
+                                        {{ __('Delete Profile') }}
+                                    </button>
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -71,6 +117,10 @@
                 </div>
             </div>
         </nav>
+
+        @if(Auth::user())
+            @include('modals.deleteProfileModal')
+        @endif
 
         <main class="py-4">
             @yield('content')

@@ -20,3 +20,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::post('/profile/avatar', 'ProfileController@update_avatar')->name('profile.avatar');
+
+Route::resource('profile', 'ProfileController');
