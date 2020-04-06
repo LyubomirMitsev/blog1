@@ -13,14 +13,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('guest')->group( function () {
+    Route::get('/', function () {
+        return view('welcome');
+    });
+
+    Route::get('/admin', 'AdminController@showLoginForm');
+
+    Route::post('/admin', 'AdminController@login')->name('admin.login');
 });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::middleware('auth')->group( function () {
 
-Route::post('/profile/avatar', 'ProfileController@update_avatar')->name('profile.avatar');
+    Route::get('/home', 'HomeController@index')->name('home');
 
-Route::resource('profile', 'ProfileController');
+    Route::post('/profile/avatar', 'ProfileController@update_avatar')->name('profile.avatar');
+
+    Route::resource('profile', 'ProfileController')->except([
+        'store', 'show'
+    ]);
+});
+
+Route::get('/admin/dashboard', 'AdminController@index')->name('admin.dashboard')->middleware('role:admin');
